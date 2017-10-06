@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	 <meta charset="UTF-8">
+	 <title>OOP Todo List</title>
+
+	 <link rel ="stylesheet" href="styles/normalize.css">
+	 <link rel="stylesheet" href="styles/style.css">
+	
+</head>
+<body>
+
+<div id="myDIV" class="header">
+  <h2>OOP To Do List w/Session Storage</h2>
+  <form>
+    <input type="text" id="myInput" placeholder="Title...">
+  <span id="add" class="addBtn">Add</span>
+</form>
+</div>
+
+<ul id="myUL">
+	
+  
+</ul>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="js/task.js"></script>
+<script src="js/tasklist.js"></script>
+<script src="js/app.js"></script>
+<script>
+
+		
+
+
+		function createListItem(el){
+			var li="";
+
+			el.forEach(function(task){
+			
+				li+= "<li class='clearfix ";
+				if(task.complete === true){
+					li+= 'checked';
+				}
+				li+="' data-id='" +task.id+"'><div class='dateAndTaskCont'><div class='dateCont'><div class='date ";
+
+				if(task.complete === true){
+					li+= 'strike';
+				}
+				
+				li+= "'><span>"+task.month+"-</span>";
+				li+= "<span>"+task.date+"-</span>";
+				li+= "<span>"+task.year+"</span>";
+				li+= "</div></div></div>";//closes date div and dateCont div dateAndTaskCont div
+				li+= "<div class='taskCont'><div class='task ";
+				if(task.complete === true){
+					li+= 'strike';
+				}
+				li+= "'>";
+				li+= task.task;
+				li+="</div></div></div>"; //closes task, taskCont, and dateAndTaskCont divs
+				li+="<div class='closeContainer'><span class='close'>&times</span></div></li>";
+
+				
+			
+			});
+			return li;
+		}
+
+		
+		var listItems = createListItem(tasklist.list);
+		
+		$("#myUL").append(listItems);
+		// document.getElementsByTagName("ul")[0].innerHTML = li;
+
+		$("#add").click(function(e){
+
+			var $taskVal = $("#myInput").val();
+			if($taskVal !== ""){
+			var $newTask = new Task($taskVal);
+			tasklist.add($newTask);
+			window.location.reload();
+		} else {
+			alert("Task cannot be empty");
+			e.preventDefault();
+		}
+
+
+
+		});
+
+		$("input").on("keypress", function(e){
+
+
+				if(e.keyCode === 13){
+					var $taskVal = $("#myInput").val();
+					if($taskVal !== ""){
+						var $newTask = new Task($taskVal);
+						tasklist.add($newTask);
+						window.location.reload();
+					} else {
+						alert("Task cannot be empty");
+						e.preventDefault();
+					}
+				}
+		});
+
+		$("li").click(function(){
+
+			var $id = $(this).attr("data-id");
+			console.log(typeof($id));			
+			tasklist.complete($id);
+
+			$(this).toggleClass("checked");
+			$(this).find(".task").toggleClass("strike");
+			$(this).find(".date").toggleClass("strike");
+
+
+		});
+
+
+		$(".close").click(function(){
+			console.log($(this).parents("li").attr("data-id"));
+			var $id = $(this).parents("li").attr("data-id")
+			tasklist.remove($id)
+			$(this).parents("li").remove();
+		});
+</script>
+
+</body>
+
+</html>
